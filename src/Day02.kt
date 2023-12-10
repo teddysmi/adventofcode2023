@@ -1,50 +1,54 @@
 fun main() {
     fun part1(input: List<String>): Int {
-
-        return input.fold(listOf(0,0)){ acc: List<Int>, s:String->
-            val a = s.split(" ")
-            when (a[0]) {
-                "forward" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==0)value+a[1].toInt() else value
+        return input.map {
+            var gameNumber = it.dropWhile { c -> !c.isDigit() }.takeWhile { c -> c != ':' }.trim().toInt()
+            val game = it.dropWhile { c -> c != ':' }.removePrefix(": ").replace(",", "").replace(";", "").split(" ")
+            for (pick in game.windowed(2, 2)) {
+                if (pick[1] == "red" && pick[0].toInt() > 12) {
+                    gameNumber = 0
+                    break
                 }
-                "down" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==1)value+a[1].toInt() else value
+                if (pick[1] == "green" && pick[0].toInt() > 13) {
+                    gameNumber = 0
+                    break
                 }
-                "up" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==1)value-a[1].toInt() else value
+                if (pick[1] == "blue" && pick[0].toInt() > 14) {
+                    gameNumber = 0
+                    break
                 }
-                else -> acc
             }
-
-        }.reduce{acc,it -> acc*it}
-
+            gameNumber
+        }.sumOf { it }
     }
 
     fun part2(input: List<String>): Int {
 
-        return input.fold(listOf(0,0,0)){ acc: List<Int>, s:String->
-            val a = s.split(" ")
-            when (a[0]) {
-                "forward" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==0)value+a[1].toInt()
-                    else if (idx==1) value+a[1].toInt()*acc[2]
-                    else value
-                }
-                "down" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==2)value+a[1].toInt() else value
-                }
-                "up" -> return@fold acc.mapIndexed{idx, value->
-                    if(idx==2)value-a[1].toInt() else value
-                }
-                else -> acc
-            }
+        return input.map {
+            var maxRed = 0
+            var maxGreen = 0
+            var maxBlue = 0
+            val game = it.dropWhile { c -> c != ':' }.removePrefix(": ").replace(",", "").replace(";", "").split(" ")
+            for (pick in game.windowed(2, 2)) {
+                if (pick[1] == "red" && pick[0].toInt() > maxRed) {
+                    maxRed = pick[0].toInt()
 
-        }.reduceIndexed{index, acc, i -> if (index!=2) acc*i else acc }
+                }
+                if (pick[1] == "green" && pick[0].toInt() > maxGreen) {
+                    maxGreen = pick[0].toInt()
+
+                }
+                if (pick[1] == "blue" && pick[0].toInt() > maxBlue) {
+                    maxBlue = pick[0].toInt()
+
+                }
+            }
+            maxRed * maxGreen * maxBlue
+        }.sumOf { it }
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day02_test")
-    check(part1(testInput) == 150)
+    check(part2(testInput) == 2286)
 
     val input = readInput("Day02")
     println(part1(input))
