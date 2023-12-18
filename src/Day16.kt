@@ -1,12 +1,5 @@
 import java.lang.Long.max
 
-enum class Direction(val pair: Pair<Int, Int>) {
-    NORTH(Pair(-1, 0)),
-    EAST(Pair(0, 1)),
-    SOUTH(Pair(1, 0)),
-    WEST(Pair(0, -1))
-}
-
 fun main() {
     data class Vec2(val row: Int, val col: Int)
 
